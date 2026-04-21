@@ -1,11 +1,19 @@
 package ru.ranepa.repository;
 
 import ru.ranepa.model.Employee;
+
+import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 
 public class EmployeeRepository {
     private final HashMap<Long, Employee> employees = new HashMap<>();
+    private long nextId = 1; // Для генерации уникальных ID
+
+    public Employee createEmployee(String name, String position, BigDecimal salary, LocalDate hireDate) {
+        return new Employee(nextId++, name, position, salary, hireDate);
+    }
 
     public void save(Employee employee) {
         long id = employee.getId();

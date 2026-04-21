@@ -33,6 +33,8 @@ public class HRMService {
 
     // Фильтрация сотрудников по должности
     public List<Employee> getEmployeesByPosition(String position) {
+        if (repository.isEmpty())
+            return null;
         return repository.findAll()
                 .stream()
                 .filter(employee -> position.equals(employee.getPosition()))

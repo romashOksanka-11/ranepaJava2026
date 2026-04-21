@@ -10,6 +10,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Scanner;
 
@@ -17,7 +18,6 @@ public class HRMApplication {
     private final Scanner scanner = new Scanner(System.in);
     private final EmployeeRepository repository = new EmployeeRepository();
     private final HRMService service = new HRMService(repository);
-    private long nextId = 1; // Для генерации уникальных ID
 
     public static void main(String[] args) {
         // Устанавливаем кодировку вывода "UTF-8".
@@ -54,6 +54,9 @@ public class HRMApplication {
                     showStatistics();
                     break;
                 case "6":
+                    filterPosition();
+                    break;
+                case "7":
                     System.out.println("Выход из программы. До свидания!");
                     return;
                 default:
@@ -61,6 +64,18 @@ public class HRMApplication {
             }
             System.out.println();
         } 
+    }
+
+    private void filterPosition() {
+        System.out.print("Введите должность: ");
+        String position = scanner.nextLine();
+        List<Employee> listFilterPosition = service.getEmployeesByPosition(position);
+        if (listFilterPosition == null) {
+            System.out.println("Невозможно вывести список сотрудников по этой должности.");
+        } else {
+            System.out.println("Сотрудники с должностью '" + position + "': ");
+            listFilterPosition.forEach(System.out::println);
+        }
     }
 
     private Long getValidIdInput() {
@@ -146,7 +161,7 @@ public class HRMApplication {
             }
         }
 
-        Employee employee = new Employee(nextId++, name, position, salary, hireDate);
+        Employee employee = repository.createEmployee(name, position, salary, hireDate);
         repository.save(employee);
         System.out.println("Добавлен сотрудник:");
         System.out.println(employee);
@@ -169,7 +184,8 @@ public class HRMApplication {
         System.out.println("3. Удалить сотрудника по ID.");
         System.out.println("4. Поиск сотрудника по ID.");
         System.out.println("5. Показать статистику (средняя зарплата, топ-менеджер).");
-        System.out.println("6. Выход.");
+        System.out.println("6. Фильтрация сотрудников по должности");
+        System.out.println("7. Выход.");
         System.out.println();
     }
 }
